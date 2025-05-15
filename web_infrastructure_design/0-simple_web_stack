@@ -1,0 +1,62 @@
+Simple Web Infrastructure - One Server Stack
+
+Overview:
+----------
+This infrastructure hosts a website accessible via the domain www.foobar.com. It uses a single server with the following components:
+- 1 Domain: foobar.com with a www subdomain pointing to IP 8.8.8.8
+- 1 Server containing:
+  - Nginx (Web Server)
+  - Application Server
+  - Application Files (Code Base)
+  - MySQL (Database)
+
+Infrastructure Flow:
+---------------------
+1. A user types "www.foobar.com" in a web browser.
+2. DNS resolves "www.foobar.com" to IP address 8.8.8.8 using an A record.
+3. The browser sends an HTTP request to 8.8.8.8.
+4. Nginx receives the request and forwards it to the application server.
+5. The application server processes the request, may query the MySQL database, and returns the response.
+6. Nginx sends the response back to the user's browser.
+
+Component Roles:
+-----------------
+- Server:
+  A physical or virtual machine that runs services and applications. In this design, it runs the full web stack.
+
+- Domain Name:
+  A human-readable name (foobar.com) that maps to an IP address. It makes the website accessible via a friendly URL.
+
+- DNS Record Type:
+  The "www" subdomain is configured using an A record. This type of DNS record maps the hostname to an IPv4 address (8.8.8.8).
+
+- Web Server (Nginx):
+  Handles HTTP requests, serves static content, manages SSL/TLS, and forwards dynamic requests to the application server.
+
+- Application Server:
+  Runs the backend application code, executes business logic, and handles dynamic content generation.
+
+- Application Files:
+  The code base of the website, typically written in languages like PHP, Python, or Node.js.
+
+- Database (MySQL):
+  Stores persistent data such as user information, content, and other relational data needed by the application.
+
+- Communication Protocol:
+  The server and the user's browser communicate using the HTTP/HTTPS protocol over TCP/IP.
+
+Infrastructure Limitations:
+----------------------------
+1. SPOF (Single Point of Failure):
+   - If the server fails, the entire website becomes unavailable.
+
+2. Downtime for Maintenance:
+   - Restarting services like Nginx or updating code leads to temporary downtime.
+
+3. Lack of Scalability:
+   - This setup cannot handle a high volume of traffic or horizontal scaling.
+   - No load balancing, replication, or redundancy.
+
+Conclusion:
+-----------
+This single-server stack is simple and effective for small-scale or development environments. However, it is not recommended for production environments requiring high availability and scalability.

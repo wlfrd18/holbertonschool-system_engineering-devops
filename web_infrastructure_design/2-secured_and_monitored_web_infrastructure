@@ -1,0 +1,67 @@
+
+Three-Server Web Infrastructure Design for www.foobar.com (Secured, Encrypted, and Monitored)
+
+1. OVERVIEW
+
+This design outlines a secure and monitored web infrastructure composed of:
+- 1 Load Balancer (HAProxy) with SSL termination
+- 3 Backend Servers (Web + App + Database)
+- Firewalls, SSL Certificate, and Monitoring agents
+
+2. INFRASTRUCTURE COMPONENTS
+
+- 3 Firewalls:
+  * Firewall 1 protects the Load Balancer from unauthorized access (only ports 80 and 443 allowed).
+  * Firewall 2 (one per server) restricts internal communication to necessary services (e.g., MySQL, monitoring).
+
+- 1 SSL Certificate:
+  * Ensures HTTPS is served at www.foobar.com.
+  * Provides encryption for traffic between user browsers and the Load Balancer.
+
+- 3 Monitoring Clients:
+  * Each server has a monitoring agent (e.g., for Sumo Logic or Prometheus).
+  * Collects logs, system metrics, and app-specific telemetry.
+
+3. PURPOSE OF EACH COMPONENT
+
+- Firewalls:
+  * Control traffic and protect each layer of the infrastructure.
+  * Prevent unauthorized access and mitigate attacks.
+
+- HTTPS (SSL Certificate):
+  * Encrypts traffic to ensure privacy, integrity, and authenticity.
+  * Required for secure web applications and user trust.
+
+- Monitoring:
+  * Tracks infrastructure and application performance.
+  * Enables alerting, logging, auditing, and proactive diagnostics.
+
+4. MONITORING MECHANISM
+
+- Monitoring agents collect logs (Nginx, app, system) and system metrics.
+- They push data to a central monitoring platform or are scraped periodically.
+- Web server QPS (Queries per Second) monitoring:
+  * Enable Nginx logs or status module.
+  * Parse logs or expose metrics.
+  * Count requests per second and visualize in dashboards.
+
+5. INFRASTRUCTURE ISSUES
+
+- SSL Termination at Load Balancer:
+  * Traffic between Load Balancer and backend servers is unencrypted by default.
+  * This creates a security risk on internal networks.
+  * Mitigation: use end-to-end encryption or re-encrypt traffic to backend.
+
+- One MySQL Server Accepting Writes:
+  * The primary (write-enabled) database server is a Single Point of Failure (SPOF).
+  * If it fails, write operations stop.
+  * Mitigation: use failover tools or multi-master setup.
+
+- All Servers Have Web + App + DB:
+  * Poor separation of concerns and inefficient resource usage.
+  * Harder to scale, secure, and maintain.
+  * Mitigation: separate services into dedicated roles or use containers/microservices.
+
+6. CONCLUSION
+
+This infrastructure improves on basic web hosting by adding encryption, monitoring, and traffic control. To reach high availability and resilience, further steps should include better service separation, database redundancy, and encrypted internal communication.

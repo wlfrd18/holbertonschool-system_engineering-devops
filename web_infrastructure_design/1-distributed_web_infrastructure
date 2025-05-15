@@ -1,0 +1,59 @@
+Infrastructure Overview:
+
+This infrastructure is composed of the following components:
+
+1. Load Balancer:
+   - HAProxy is used as the load balancer.
+   - It sits in front of the servers and distributes incoming traffic to them.
+   - Load balancing algorithm: Round Robin – it distributes requests sequentially and evenly across servers to balance the load.
+   - Configuration is set for Active-Active setup, meaning both backend servers are used simultaneously to handle traffic.
+
+2. Servers (2 total):
+   Each server includes the following:
+
+   a. Web Server:
+      - Nginx is used to handle HTTP requests.
+      - It serves static files and acts as a reverse proxy to the application server.
+
+   b. Application Server:
+      - Runs the application code (can be in Node.js, Python, PHP, etc.).
+      - Handles business logic and interacts with the database.
+
+   c. Application Files:
+      - The latest version of the code base is deployed on both servers for redundancy and load sharing.
+
+   d. Database:
+      - MySQL database configured in a Primary-Replica (Master-Slave) cluster.
+      - One server hosts the Primary node; the other hosts the Replica.
+
+Explanation of Design Choices:
+
+- HAProxy Load Balancer:
+  - Reason: Provides traffic distribution and high availability.
+  - Round Robin ensures even traffic distribution across all active servers.
+  - Active-Active Setup: Both backend servers are actively receiving and processing traffic, increasing resource utilization and reducing response time.
+  - Active-Passive Setup (for comparison): One server is active while the other is on standby for failover. It offers fault tolerance but not optimal resource use.
+
+- Primary-Replica Database Cluster:
+  - Primary Node (Master): Handles all write operations.
+  - Replica Node (Slave): Handles read operations and syncs from the Primary.
+  - Benefit: Reduces load on the Primary and increases database read performance.
+  - The application is configured to send write queries to the Primary and read queries to the Replica.
+
+Infrastructure Weaknesses:
+
+1. SPOF (Single Points of Failure):
+   - The Load Balancer (HAProxy) is a SPOF. If it fails, the entire system becomes inaccessible.
+   - A solution would be to add a second load balancer and configure failover (e.g., using Keepalived).
+
+2. Security Issues:
+   - No firewall: The system is exposed to attacks. Firewalls should restrict unauthorized access to ports and services.
+   - No HTTPS: All traffic is unencrypted, making it vulnerable to man-in-the-middle attacks. SSL/TLS should be implemented.
+
+3. No Monitoring:
+   - There is no way to detect server failures, high resource usage, or traffic spikes.
+   - Tools like Prometheus, Grafana, or ELK Stack should be integrated for monitoring and alerting.
+
+Conclusion:
+
+This infrastructure provides scalability and some level of redundancy via the Active-Active setup and database replication. However, it lacks essential elements like security hardening, SPOF mitigation, and monitoring, which are critical for production-grade environments.
